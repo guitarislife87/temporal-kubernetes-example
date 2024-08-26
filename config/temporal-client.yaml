@@ -12,6 +12,6 @@ spec:
           - name: temporal-client
             image: temporal-app:0.0.1
             imagePullPolicy: Never
-            command: ["npm", "run", "client"]
+            command: ["npm", "run", "workflow"]
             # Add any additional container configuration here
           restartPolicy: OnFailure

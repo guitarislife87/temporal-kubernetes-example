@@ -15,9 +15,8 @@ spec:
       automountServiceAccountToken: false
       containers:
         - name: temporal-worker
-          image: temporal-worker:0.0.1
-          imagePullPolicy: Never
-          command: ["npm", "run", "worker"]
+          image: temporal-app:0.0.1
+          command: ["npm", "start"]
           resources:
             limits:
               cpu: 500m
