@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: temporal-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: temporal-worker
+  template:
+    metadata:
+      labels:
+        app: temporal-worker
+    spec:
+      automountServiceAccountToken: false
+      containers:
+        - name: temporal-worker
+          image: temporal-worker:0.0.1
+          imagePullPolicy: Never
+          command: ["npm", "run", "worker"]
+          resources:
+            limits:
+              cpu: 500m
+              memory: "512Mi"
+            requests:
+              cpu: 200m
+              memory: "256Mi"
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: temporal-worker
+spec:
+  scaleTargetRef:
+    name: temporal-worker
+  pollingInterval: 10   # Optional. Default: 30 seconds
+  cooldownPeriod: 30    # Optional. Default: 300 seconds
+  maxReplicaCount: 10   # Optional. Default: 100
+  triggers:
+  - type: postgresql
+    metadata:
+      host: "postgresql.postgresql.svc.cluster.local"
+      userName: "temporal"
+      dbname: "temporal"
+      password: temporal_password
+      query: "SELECT COUNT() FROM task_queue WHERE queue_name = 'slow'"
+      targetQueryValue: "5"

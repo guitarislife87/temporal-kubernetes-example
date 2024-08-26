@@ -1,0 +1,74 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    name: temporal
+  name: temporal
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: temporal
+  namespace: flux-system
+spec:
+  interval: 5m0s
+  url: https://go.temporal.io/helm-charts
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: temporal
+  namespace: temporal
+spec:
+  interval: 10m
+  timeout: 15m
+  chart:
+    spec:
+      chart: temporal
+      version: '0.44.*'
+      sourceRef:
+        kind: HelmRepository
+        name: temporal
+        namespace: flux-system
+      interval: 5m
+  releaseName: temporal
+  values:
+    web:
+      service:
+        type: NodePort
+        nodePort: 30001
+    server:
+      replicaCount: 1
+      config:
+        persistence:
+          defaultStore: default
+          default:
+            driver: "sql"
+            sql:
+              driver: "postgres12"
+              host: "postgresql.postgresql.svc.cluster.local"
+              port: 5432
+              database: "temporal"
+              user: "temporal"
+              password: "temporal_password"
+              maxConns: 20
+              maxConnLifetime: "1h"
+          visibility:
+            driver: "sql"
+            sql:
+              driver: "postgres12"
+              host: "postgresql.postgresql.svc.cluster.local"
+              port: 5432
+              database: "temporal"
+              user: "temporal"
+              password: "temporal_password"
+              maxConns: 20
+              maxConnLifetime: "1h"
+    cassandra:
+      enabled: false
+    elasticsearch:
+      enabled: false
+    prometheus:
+      enabled: false
+    grafana:
+      enabled: false

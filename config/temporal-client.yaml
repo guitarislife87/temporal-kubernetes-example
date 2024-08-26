@@ -1,0 +1,17 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: temporal-client
+spec:
+  schedule: "*/2 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: temporal-client
+            image: temporal-app:0.0.1
+            imagePullPolicy: Never
+            command: ["npm", "run", "client"]
+            # Add any additional container configuration here
+          restartPolicy: OnFailure

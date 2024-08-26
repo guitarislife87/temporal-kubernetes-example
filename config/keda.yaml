@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    name: keda
+  name: keda
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: kedacore
+  namespace: flux-system
+spec:
+  interval: 5m0s
+  url: https://kedacore.github.io/charts
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: keda
+  namespace: keda
+spec:
+  interval: 10m
+  timeout: 5m
+  chart:
+    spec:
+      chart: keda
+      version: '2.15.*'
+      sourceRef:
+        kind: HelmRepository
+        name: kedacore
+        namespace: flux-system
+      interval: 5m
+  releaseName: keda
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  test:
+    enable: true
+  driftDetection:
+    mode: enabled
+    ignore:
+    - paths: ["/spec/replicas"]
+      target:
+        kind: Deployment
