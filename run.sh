@@ -30,6 +30,8 @@ make temporal-sql-tool
 cd ../
 
 kubectl --context $CONTEXT apply -f ./config/temporal.yaml
+kubectl --context $CONTEXT wait --for=condition=ready pod -l app=temporal-web
+kubectl --context $CONTEXT exec -it -n temporal svc/temporal-admintools -- tctl namespace register default
 
 docker build -t temporal-app:0.0.1 -f ./test-app/Dockerfile ./test-app
 k3d image import temporal-app:0.0.1 --cluster temporal
