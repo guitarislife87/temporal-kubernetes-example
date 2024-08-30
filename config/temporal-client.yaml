@@ -14,4 +14,7 @@ spec:
             imagePullPolicy: Never
             command: ["npm", "run", "workflow"]
             # Add any additional container configuration here
+            env:
+              - name: TEMPORAL_HOST_URL
+                value: temporal-frontend.temporal.svc.cluster.local:7233
           restartPolicy: OnFailure

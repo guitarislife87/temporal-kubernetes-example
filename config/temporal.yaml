@@ -59,7 +59,7 @@ spec:
               driver: "postgres12"
               host: "postgresql.postgresql.svc.cluster.local"
               port: 5432
-              database: "temporal"
+              database: "temporal_visibility"
               user: "temporal"
               password: "temporal_password"
               maxConns: 20

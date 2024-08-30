@@ -3,8 +3,7 @@ import * as activities from './activities';
 
 async function run() {
   const connection = await NativeConnection.connect({
-    address: 'temporal-frontend.temporal.svc.cluster.local:7233',
-    // TLS and gRPC metadata configuration goes here.
+    address: process.env.TEMPORAL_HOST_URL ?? 'http://localhost:7233',
   });
 
   const worker = await Worker.create({

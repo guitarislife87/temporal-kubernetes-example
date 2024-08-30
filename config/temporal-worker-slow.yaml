@@ -24,6 +24,9 @@ spec:
             requests:
               cpu: 200m
               memory: "256Mi"
+          env:
+            - name: TEMPORAL_HOST_URL
+              value: temporal-frontend.temporal.svc.cluster.local:7233
 ---
 apiVersion: keda.sh/v1alpha1
 kind: ScaledObject
